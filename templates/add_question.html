@@ -1,0 +1,80 @@
+{% extends "base.html" %}
+{% block title %}Add Question — Admin{% endblock %}
+{% block content %}
+<div class="page-container">
+  <div style="max-width:700px;margin:0 auto;">
+    <div class="page-header flex-between">
+      <div>
+        <h1 class="page-title">➕ Add Question</h1>
+        <p class="page-subtitle">Create a new quiz question</p>
+      </div>
+      <a href="{{ url_for('admin_dashboard') }}" class="btn btn-secondary">← Back</a>
+    </div>
+
+    <div class="card">
+      <form method="POST">
+        <div class="form-group">
+          <label class="form-label">📚 Category</label>
+          <select name="category_id" class="form-control" required>
+            <option value="">-- Select Category --</option>
+            {% for cat in cats %}
+            <option value="{{ cat.id }}">{{ cat.icon }} {{ cat.name }}</option>
+            {% endfor %}
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">❓ Question Text</label>
+          <textarea name="question" class="form-control" rows="3"
+            placeholder="Enter the question..." required
+            style="resize:vertical;"></textarea>
+        </div>
+
+        <div class="grid-2">
+          <div class="form-group">
+            <label class="form-label">🅰️ Option A</label>
+            <input name="option_a" type="text" class="form-control" placeholder="Option A" required>
+          </div>
+          <div class="form-group">
+            <label class="form-label">🅱️ Option B</label>
+            <input name="option_b" type="text" class="form-control" placeholder="Option B" required>
+          </div>
+          <div class="form-group">
+            <label class="form-label">©️ Option C</label>
+            <input name="option_c" type="text" class="form-control" placeholder="Option C" required>
+          </div>
+          <div class="form-group">
+            <label class="form-label">🅳 Option D</label>
+            <input name="option_d" type="text" class="form-control" placeholder="Option D" required>
+          </div>
+        </div>
+
+        <div class="grid-2">
+          <div class="form-group">
+            <label class="form-label">✅ Correct Answer</label>
+            <select name="correct_answer" class="form-control" required>
+              <option value="">-- Select --</option>
+              <option value="A">A</option>
+              <option value="B">B</option>
+              <option value="C">C</option>
+              <option value="D">D</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label class="form-label">🎯 Difficulty</label>
+            <select name="difficulty" class="form-control" required>
+              <option value="easy">Easy</option>
+              <option value="medium" selected>Medium</option>
+              <option value="hard">Hard</option>
+            </select>
+          </div>
+        </div>
+
+        <button type="submit" class="btn btn-primary btn-full btn-lg">
+          ➕ Add Question
+        </button>
+      </form>
+    </div>
+  </div>
+</div>
+{% endblock %}

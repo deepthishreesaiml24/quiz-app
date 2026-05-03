@@ -1,0 +1,59 @@
+{% extends "base.html" %}
+{% block title %}{{ cat.name }} Questions — Admin{% endblock %}
+{% block content %}
+<div class="page-container">
+  <div class="page-header flex-between flex-wrap gap-2">
+    <div>
+      <h1 class="page-title">{{ cat.icon }} {{ cat.name }}</h1>
+      <p class="page-subtitle">{{ questions|length }} questions in this category</p>
+    </div>
+    <div style="display:flex;gap:0.5rem;flex-wrap:wrap;">
+      <a href="{{ url_for('add_question') }}" class="btn btn-primary btn-sm">➕ Add Question</a>
+      <a href="{{ url_for('admin_dashboard') }}" class="btn btn-secondary btn-sm">← Back</a>
+    </div>
+  </div>
+
+  <div class="card">
+    <div style="overflow-x:auto;">
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th>#</th>
+            <th style="min-width:250px;">Question</th>
+            <th>A</th><th>B</th><th>C</th><th>D</th>
+            <th>Answer</th>
+            <th>Difficulty</th>
+            <th>Action</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for q in questions %}
+          <tr>
+            <td style="color:var(--text-muted);font-size:0.8rem;">{{ loop.index }}</td>
+            <td><strong style="font-size:0.9rem;">{{ q.question }}</strong></td>
+            <td style="font-size:0.85rem;color:var(--text-secondary);">{{ q.option_a }}</td>
+            <td style="font-size:0.85rem;color:var(--text-secondary);">{{ q.option_b }}</td>
+            <td style="font-size:0.85rem;color:var(--text-secondary);">{{ q.option_c }}</td>
+            <td style="font-size:0.85rem;color:var(--text-secondary);">{{ q.option_d }}</td>
+            <td>
+              <span class="tag tag-green">{{ q.correct_answer }}</span>
+            </td>
+            <td>
+              <span class="question-diff diff-{{ q.difficulty }}">{{ q.difficulty }}</span>
+            </td>
+            <td>
+              <form method="POST" action="{{ url_for('delete_question', qid=q.id) }}"
+                    onsubmit="return confirm('Delete this question?')">
+                <button type="submit" class="btn btn-danger btn-sm">🗑</button>
+              </form>
+            </td>
+          </tr>
+          {% else %}
+          <tr><td colspan="9" style="text-align:center;color:var(--text-muted);padding:2rem;">No questions yet. Add some!</td></tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+{% endblock %}

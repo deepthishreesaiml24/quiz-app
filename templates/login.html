@@ -1,0 +1,41 @@
+{% extends "base.html" %}
+{% block title %}Login — Quiz Master{% endblock %}
+{% block content %}
+<div class="auth-page">
+  <div class="auth-card">
+    <div class="auth-logo">
+      <span class="auth-logo-icon">🎓</span>
+    </div>
+    <h1 class="auth-title">Quiz<span style="color:var(--accent)">Master</span></h1>
+    <p class="auth-subtitle">Sign in to your account</p>
+
+    <form method="POST">
+      <div class="form-group">
+        <label class="form-label">👤 Username</label>
+        <input name="username" type="text" class="form-control" placeholder="Enter username" required autofocus>
+      </div>
+      <div class="form-group">
+        <label class="form-label">🔒 Password</label>
+        <input name="password" type="password" class="form-control" placeholder="Enter password" required>
+      </div>
+      <button type="submit" class="btn btn-primary btn-full btn-lg" style="margin-top:0.5rem">
+        🚀 Sign In
+      </button>
+    </form>
+
+    <div class="divider"></div>
+    <div class="auth-footer">
+      Don't have an account?
+      <a href="{{ url_for('register') }}" class="auth-link">Create one →</a>
+    </div>
+
+    <div style="margin-top:1.5rem;padding:1rem;background:rgba(124,77,255,0.07);border-radius:var(--radius-sm);border:1px solid rgba(124,77,255,0.15);">
+      <div style="font-size:0.8rem;color:var(--text-muted);font-weight:700;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:0.6rem;">Demo Accounts</div>
+      <div style="font-size:0.85rem;color:var(--text-secondary);line-height:1.8;">
+        👑 Admin: <strong style="color:var(--gold)">admin</strong> / <strong style="color:var(--gold)">admin123</strong><br>
+        🎓 Student: <strong style="color:var(--accent2)">student1</strong> / <strong style="color:var(--accent2)">student123</strong>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

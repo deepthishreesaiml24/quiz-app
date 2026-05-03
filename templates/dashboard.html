@@ -1,0 +1,127 @@
+{% extends "base.html" %}
+{% block title %}Dashboard — Quiz Master{% endblock %}
+{% block content %}
+<div class="page-container">
+
+  <!-- Hero Banner -->
+  <div style="background:linear-gradient(135deg,rgba(124,77,255,0.2),rgba(0,229,255,0.1));border:1px solid rgba(124,77,255,0.2);border-radius:var(--radius-lg);padding:2rem;margin-bottom:2rem;display:flex;align-items:center;gap:1.5rem;flex-wrap:wrap;">
+    <div style="font-size:4rem;">{{ user.avatar }}</div>
+    <div style="flex:1;">
+      <div style="font-size:1.5rem;font-weight:900;">Hey, {{ user.username }}! 👋</div>
+      <div style="color:var(--text-secondary);margin:0.3rem 0;">Level {{ level }} Scholar  •  {{ user.xp }} XP  •  {{ user.quizzes_taken }} Quizzes</div>
+      <div style="margin-top:0.5rem;">
+        <div style="display:flex;justify-content:space-between;font-size:0.8rem;color:var(--text-muted);margin-bottom:4px;">
+          <span>Level {{ level }}</span><span>{{ user.xp % 100 }}/100 XP</span>
+        </div>
+        <div class="xp-bar-wrap" style="width:min(300px,100%);">
+          <div class="xp-bar-fill" style="width:{{ progress }}%;"></div>
+        </div>
+      </div>
+    </div>
+    <div style="text-align:center;">
+      <div style="font-size:2.5rem;font-weight:900;color:var(--gold);">{{ user.total_score }}</div>
+      <div style="font-size:0.8rem;color:var(--text-muted);">Total Points</div>
+    </div>
+  </div>
+
+  <!-- Stats -->
+  <div class="stats-grid">
+    <div class="stat-card purple">
+      <span class="stat-icon">📝</span>
+      <div class="stat-value">{{ user.quizzes_taken }}</div>
+      <div class="stat-label">Quizzes Taken</div>
+    </div>
+    <div class="stat-card gold">
+      <span class="stat-icon">🏅</span>
+      <div class="stat-value">{{ badges|length }}</div>
+      <div class="stat-label">Badges Earned</div>
+    </div>
+    <div class="stat-card cyan">
+      <span class="stat-icon">⭐</span>
+      <div class="stat-value">{{ level }}</div>
+      <div class="stat-label">Current Level</div>
+    </div>
+    <div class="stat-card green">
+      <span class="stat-icon">🎯</span>
+      <div class="stat-value">{{ user.total_score }}</div>
+      <div class="stat-label">Total Score</div>
+    </div>
+  </div>
+
+  <div class="grid-2">
+    <!-- Categories -->
+    <div>
+      <div class="section-title">📚 Choose a Category</div>
+      <div class="categories-grid">
+        {% for cat in cats %}
+        <a href="{{ url_for('start_quiz', cat_id=cat.id) }}" class="cat-card" style="--cat-color:{{ cat.color }}">
+          <span class="cat-icon">{{ cat.icon }}</span>
+          <div class="cat-name">{{ cat.name }}</div>
+          <div class="cat-count">30 questions</div>
+          <div class="cat-bar"><div class="cat-bar-fill" style="width:{{ [cat.id * 17 % 80 + 20, 100]|min }}%;background:{{ cat.color }}"></div></div>
+        </a>
+        {% endfor %}
+      </div>
+    </div>
+
+    <!-- Right column -->
+    <div>
+      <!-- Badges -->
+      <div class="card mb-3">
+        <div class="section-title">🏅 Your Badges</div>
+        {% if badges %}
+        <div class="badge-grid">
+          {% for b in badges %}
+          <span class="badge-item">{{ b.icon }} {{ b.name }}</span>
+          {% endfor %}
+        </div>
+        {% else %}
+        <p style="color:var(--text-muted);font-size:0.9rem;">Complete quizzes to earn badges! 🌟</p>
+        {% endif %}
+      </div>
+
+      <!-- Leaderboard preview -->
+      <div class="card mb-3">
+        <div class="flex-between mb-2">
+          <div class="section-title" style="margin:0">🏆 Top Players</div>
+          <a href="{{ url_for('leaderboard') }}" class="btn btn-secondary btn-sm">View All</a>
+        </div>
+        {% for row in top %}
+        <div class="lb-row">
+          <div class="lb-rank {% if loop.index==1 %}rank-1{% elif loop.index==2 %}rank-2{% elif loop.index==3 %}rank-3{% else %}rank-other{% endif %}">
+            {% if loop.index == 1 %}🥇{% elif loop.index == 2 %}🥈{% elif loop.index == 3 %}🥉{% else %}{{ loop.index }}{% endif %}
+          </div>
+          <div class="lb-user">
+            <div class="lb-username">{{ row.avatar if row.avatar else '🎓' }} {{ row.username }}</div>
+            <div class="lb-info">Level {{ row.level }} • {{ row.count }} quizzes</div>
+          </div>
+          <div class="lb-score">{{ row.total }}</div>
+        </div>
+        {% else %}
+        <p style="color:var(--text-muted);font-size:0.9rem;">No scores yet. Be the first!</p>
+        {% endfor %}
+      </div>
+
+      <!-- Recent activity -->
+      <div class="card">
+        <div class="section-title">⏱ Recent Activity</div>
+        {% for s in recent %}
+        <div style="display:flex;align-items:center;gap:0.8rem;padding:0.7rem 0;border-bottom:1px solid rgba(255,255,255,0.04);">
+          <span style="font-size:1.3rem;">{{ s.icon }}</span>
+          <div style="flex:1;">
+            <div style="font-weight:600;font-size:0.9rem;">{{ s.cat_name }}</div>
+            <div style="font-size:0.8rem;color:var(--text-muted);">{{ s.completed_at[:10] }}</div>
+          </div>
+          <span class="score-badge {% if s.percentage >= 80 %}score-high{% elif s.percentage >= 50 %}score-medium{% else %}score-low{% endif %}">
+            {{ s.percentage }}%
+          </span>
+        </div>
+        {% else %}
+        <p style="color:var(--text-muted);font-size:0.9rem;">Take your first quiz now! 🚀</p>
+        {% endfor %}
+      </div>
+    </div>
+  </div>
+
+</div>
+{% endblock %}

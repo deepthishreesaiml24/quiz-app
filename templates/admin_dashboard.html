@@ -1,0 +1,128 @@
+{% extends "base.html" %}
+{% block title %}Admin — Quiz Master{% endblock %}
+{% block content %}
+<div class="page-container">
+  <div class="page-header">
+    <h1 class="page-title">👑 Admin Dashboard</h1>
+    <p class="page-subtitle">Manage questions, users, and scores</p>
+  </div>
+
+  <!-- Stats -->
+  <div class="stats-grid">
+    <div class="stat-card cyan">
+      <span class="stat-icon">👥</span>
+      <div class="stat-value">{{ stats.users }}</div>
+      <div class="stat-label">Students</div>
+    </div>
+    <div class="stat-card purple">
+      <span class="stat-icon">❓</span>
+      <div class="stat-value">{{ stats.questions }}</div>
+      <div class="stat-label">Questions</div>
+    </div>
+    <div class="stat-card green">
+      <span class="stat-icon">📝</span>
+      <div class="stat-value">{{ stats.quizzes }}</div>
+      <div class="stat-label">Quizzes Taken</div>
+    </div>
+    <div class="stat-card gold">
+      <span class="stat-icon">📚</span>
+      <div class="stat-value">{{ stats.categories }}</div>
+      <div class="stat-label">Categories</div>
+    </div>
+  </div>
+
+  <!-- Quick Actions -->
+  <div style="display:flex;gap:1rem;flex-wrap:wrap;margin-bottom:2rem;">
+    <a href="{{ url_for('add_question') }}" class="btn btn-primary">➕ Add Question</a>
+    <a href="{{ url_for('admin_users') }}" class="btn btn-secondary">👥 Manage Users</a>
+    <a href="{{ url_for('admin_scores') }}" class="btn btn-secondary">📊 View All Scores</a>
+    <a href="{{ url_for('leaderboard') }}" class="btn btn-secondary">🏆 Leaderboard</a>
+  </div>
+
+  <div class="admin-layout">
+    <!-- Categories -->
+    <div class="card">
+      <div class="section-title">📚 Categories & Questions</div>
+      <div style="overflow-x:auto;">
+        <table class="data-table">
+          <thead>
+            <tr><th>Category</th><th>Questions</th><th>Actions</th></tr>
+          </thead>
+          <tbody>
+            {% for cat in cats %}
+            <tr>
+              <td>
+                <span style="font-size:1.1rem;">{{ cat.icon }}</span>
+                <strong>{{ cat.name }}</strong>
+              </td>
+              <td>
+                <span class="score-badge {% if cat.q_count >= 20 %}score-high{% elif cat.q_count >= 10 %}score-medium{% else %}score-low{% endif %}">
+                  {{ cat.q_count }}
+                </span>
+              </td>
+              <td>
+                <a href="{{ url_for('admin_questions', cat_id=cat.id) }}" class="btn btn-secondary btn-sm">View</a>
+              </td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Recent Sessions -->
+    <div class="card">
+      <div class="section-title">📊 Recent Quiz Sessions</div>
+      <div style="overflow-x:auto;">
+        <table class="data-table">
+          <thead>
+            <tr><th>Student</th><th>Category</th><th>Score</th><th>%</th></tr>
+          </thead>
+          <tbody>
+            {% for s in recent_sessions %}
+            <tr>
+              <td><strong>{{ s.username }}</strong></td>
+              <td>{{ s.icon }} {{ s.cat_name }}</td>
+              <td><strong style="color:var(--gold)">{{ s.score }}</strong></td>
+              <td>
+                <span class="score-badge {% if s.percentage >= 80 %}score-high{% elif s.percentage >= 50 %}score-medium{% else %}score-low{% endif %}">
+                  {{ s.percentage }}%
+                </span>
+              </td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- New Students -->
+    <div class="card">
+      <div class="section-title">👤 New Students</div>
+      {% for u in recent_users %}
+      <div style="display:flex;align-items:center;gap:0.8rem;padding:0.7rem 0;border-bottom:1px solid rgba(255,255,255,0.04);">
+        <span style="font-size:1.3rem;">{{ u.avatar }}</span>
+        <div>
+          <div style="font-weight:700;">{{ u.username }}</div>
+          <div style="font-size:0.8rem;color:var(--text-muted);">Joined {{ u.created_at[:10] }}</div>
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+
+    <!-- Info Card -->
+    <div class="card" style="background:linear-gradient(135deg,rgba(124,77,255,0.1),rgba(0,229,255,0.05));border-color:rgba(124,77,255,0.3)">
+      <div class="section-title">ℹ️ System Info</div>
+      <div style="color:var(--text-secondary);font-size:0.9rem;line-height:2;">
+        <div>🗄️ Database: SQLite</div>
+        <div>🐍 Backend: Python Flask</div>
+        <div>🎨 UI: Pure HTML + CSS</div>
+        <div>📄 Certificates: ReportLab PDF</div>
+        <div>❓ Total Questions: {{ stats.questions }}/600</div>
+        <div>🏆 Categories: {{ stats.categories }}/20</div>
+      </div>
+    </div>
+  </div>
+
+</div>
+{% endblock %}

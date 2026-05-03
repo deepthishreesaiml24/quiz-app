@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>{% block title %}Quiz Master{% endblock %}</title>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+{% block extra_css %}{% endblock %}
+</head>
+<body>
+{% if session.user %}
+<nav class="navbar">
+  <div class="nav-brand">
+    <span class="brand-icon">🎓</span>
+    <span class="brand-text">Quiz<span class="brand-accent">Master</span></span>
+  </div>
+  <div class="nav-links">
+    {% if session.user.role == 'admin' %}
+      <a href="{{ url_for('admin_dashboard') }}" class="nav-link {% if request.endpoint=='admin_dashboard' %}active{% endif %}">
+        <span>🏠</span> Dashboard
+      </a>
+      <a href="{{ url_for('admin_users') }}" class="nav-link {% if request.endpoint=='admin_users' %}active{% endif %}">
+        <span>👥</span> Users
+      </a>
+      <a href="{{ url_for('admin_scores') }}" class="nav-link {% if request.endpoint=='admin_scores' %}active{% endif %}">
+        <span>📊</span> Scores
+      </a>
+      <a href="{{ url_for('add_question') }}" class="nav-link {% if request.endpoint=='add_question' %}active{% endif %}">
+        <span>➕</span> Add Q
+      </a>
+    {% else %}
+      <a href="{{ url_for('student_dashboard') }}" class="nav-link {% if request.endpoint=='student_dashboard' %}active{% endif %}">
+        <span>🏠</span> Home
+      </a>
+      <a href="{{ url_for('leaderboard') }}" class="nav-link {% if request.endpoint=='leaderboard' %}active{% endif %}">
+        <span>🏆</span> Leaderboard
+      </a>
+    {% endif %}
+  </div>
+  <div class="nav-user">
+    <span class="user-avatar">{{ session.user.avatar }}</span>
+    <span class="user-name">{{ session.user.username }}</span>
+    <a href="{{ url_for('logout') }}" class="btn-logout">Logout</a>
+  </div>
+</nav>
+{% endif %}
+
+<div class="flash-messages">
+{% with messages = get_flashed_messages(with_categories=true) %}
+  {% for cat, msg in messages %}
+    <div class="flash flash-{{ cat }}">{{ msg }}</div>
+  {% endfor %}
+{% endwith %}
+</div>
+
+{% block content %}{% endblock %}
+
+<div class="particles" id="particles">
+  {% for i in range(20) %}
+  <div class="particle" style="--delay:{{ loop.index * 0.3 }}s; --x:{{ loop.index * 5 }}%"></div>
+  {% endfor %}
+</div>
+</body>
+</html>

@@ -1,0 +1,71 @@
+{% extends "base.html" %}
+{% block title %}Question {{ num }} — Quiz Master{% endblock %}
+{% block extra_css %}
+<meta http-equiv="refresh" content="30;url={{ url_for('quiz_answer') }}">
+{% endblock %}
+{% block content %}
+<div class="quiz-wrap">
+
+  <!-- Progress -->
+  <div class="quiz-header">
+    <div class="quiz-progress-bar">
+      <div class="quiz-progress-fill" style="width:{{ ((num-1)/total*100)|round }}%;"></div>
+    </div>
+    <div class="quiz-meta">
+      <span class="quiz-counter">Question <strong>{{ num }}</strong> of {{ total }}</span>
+      <span class="quiz-score-display">🏆 {{ score }} pts</span>
+    </div>
+  </div>
+
+  <!-- Timer (Pure CSS countdown) -->
+  <div class="timer-wrap">
+    <div style="text-align:center;">
+      <div style="position:relative;width:90px;height:90px;margin:0 auto;">
+        <svg width="90" height="90" style="position:absolute;top:0;left:0;transform:rotate(-90deg)">
+          <circle cx="45" cy="45" r="40" fill="none" stroke="rgba(255,255,255,0.06)" stroke-width="6"/>
+          <circle cx="45" cy="45" r="40" fill="none" stroke="var(--accent2)" stroke-width="6"
+            stroke-dasharray="251" stroke-dashoffset="0"
+            style="animation: countdown 30s linear forwards;"
+            id="timer-arc"/>
+        </svg>
+        <div style="position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;">
+          <span style="font-size:1.4rem;font-weight:900;color:var(--accent2);" id="timer-num">30</span>
+          <span style="font-size:0.6rem;color:var(--text-muted);">sec</span>
+        </div>
+      </div>
+      <div style="font-size:0.75rem;color:var(--text-muted);margin-top:0.3rem;">Time remaining</div>
+    </div>
+  </div>
+
+  <!-- Question -->
+  <div class="question-card">
+    <div class="question-num">Question {{ num }} / {{ total }}</div>
+    <div class="question-text">{{ q.question }}</div>
+    <span class="question-diff diff-{{ q.difficulty }}">{{ q.difficulty }}</span>
+  </div>
+
+  <!-- Options -->
+  <form method="POST" action="{{ url_for('quiz_answer') }}">
+    <div class="options-grid">
+      {% for letter, text in options %}
+      <button type="submit" name="answer" value="{{ letter }}" class="option-btn">
+        <span class="option-letter">{{ letter }}</span>
+        <span>{{ text }}</span>
+      </button>
+      {% endfor %}
+    </div>
+  </form>
+
+  <!-- Mini tip -->
+  <div style="text-align:center;margin-top:1.5rem;color:var(--text-muted);font-size:0.8rem;">
+    💡 Auto-submits in 30 seconds if no answer selected
+  </div>
+</div>
+
+<style>
+@keyframes countdown {
+  from { stroke-dashoffset: 0; }
+  to   { stroke-dashoffset: 251; }
+}
+</style>
+{% endblock %}

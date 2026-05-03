@@ -1,0 +1,99 @@
+{% extends "base.html" %}
+{% block title %}Results — Quiz Master{% endblock %}
+{% block content %}
+<div style="position:relative;z-index:1;">
+
+  <!-- Result Hero -->
+  <div class="result-hero">
+    {% set pct_deg = (pct / 100 * 360)|int %}
+    <div class="result-score-ring" style="--pct:{{ pct|int }}deg; background:conic-gradient(
+      {% if pct >= 80 %}var(--success){% elif pct >= 60 %}var(--accent){% elif pct >= 40 %}var(--warning){% else %}var(--error){% endif %}
+      {{ pct }}%, rgba(255,255,255,0.06) 0%);">
+      <div class="result-score-inner">
+        <div class="result-pct">{{ pct|int }}%</div>
+        <div class="result-pct-label">Score</div>
+      </div>
+    </div>
+
+    {% if pct >= 90 %}
+      <div class="result-grade grade-aplus">A+ 🌟</div>
+      <h2 style="margin-top:1rem;font-size:1.5rem;">Outstanding Performance!</h2>
+    {% elif pct >= 80 %}
+      <div class="result-grade grade-a">A 🎯</div>
+      <h2 style="margin-top:1rem;font-size:1.5rem;">Excellent Work!</h2>
+    {% elif pct >= 70 %}
+      <div class="result-grade grade-a" style="background:linear-gradient(135deg,#00bcd4,#0097a7)">B+ 👍</div>
+      <h2 style="margin-top:1rem;font-size:1.5rem;">Good Job!</h2>
+    {% elif pct >= 60 %}
+      <div class="result-grade grade-b">B 👌</div>
+      <h2 style="margin-top:1rem;font-size:1.5rem;">Nice Effort!</h2>
+    {% else %}
+      <div class="result-grade grade-f">Try Again 💪</div>
+      <h2 style="margin-top:1rem;font-size:1.5rem;">Keep Practicing!</h2>
+    {% endif %}
+
+    <div class="result-stats">
+      <div class="result-stat">
+        <div class="result-stat-val" style="color:var(--success)">{{ correct }}</div>
+        <div class="result-stat-lbl">✅ Correct</div>
+      </div>
+      <div class="result-stat">
+        <div class="result-stat-val" style="color:var(--error)">{{ wrong }}</div>
+        <div class="result-stat-lbl">❌ Wrong</div>
+      </div>
+      <div class="result-stat">
+        <div class="result-stat-val" style="color:var(--gold)">{{ score }}</div>
+        <div class="result-stat-lbl">🏆 Points</div>
+      </div>
+      <div class="result-stat">
+        <div class="result-stat-val" style="color:var(--accent2)">+{{ xp }}</div>
+        <div class="result-stat-lbl">⭐ XP</div>
+      </div>
+      <div class="result-stat">
+        <div class="result-stat-val" style="color:var(--text-secondary)">{{ time }}s</div>
+        <div class="result-stat-lbl">⏱ Time</div>
+      </div>
+    </div>
+
+    <!-- Action Buttons -->
+    <div style="display:flex;gap:1rem;flex-wrap:wrap;justify-content:center;margin-top:1.5rem;">
+      {% if pct >= 60 %}
+      <a href="{{ url_for('download_certificate', uid=uid, score=score, pct=pct|int, cat_name=cat.name) }}"
+         class="btn btn-gold btn-lg">
+        📜 Download Certificate
+      </a>
+      {% endif %}
+      <a href="{{ url_for('start_quiz', cat_id=cat.id) }}" class="btn btn-primary btn-lg">
+        🔄 Retry Quiz
+      </a>
+      <a href="{{ url_for('student_dashboard') }}" class="btn btn-secondary btn-lg">
+        🏠 Dashboard
+      </a>
+    </div>
+
+    {% if pct < 60 %}
+    <div style="margin-top:1rem;padding:0.8rem;background:rgba(255,171,64,0.1);border:1px solid rgba(255,171,64,0.3);border-radius:var(--radius);font-size:0.85rem;color:var(--warning);">
+      💡 Score 60%+ to unlock your certificate! Keep trying!
+    </div>
+    {% endif %}
+  </div>
+
+  <!-- Answer Review -->
+  <div class="answer-review" style="padding-bottom:3rem;">
+    <h3 style="text-align:center;margin-bottom:1.5rem;font-size:1.2rem;color:var(--text-primary);">📋 Answer Review</h3>
+    {% for a in answers %}
+    <div class="answer-item {% if a.ok %}correct{% else %}wrong{% endif %}">
+      <div class="answer-q">{{ loop.index }}. {{ a.q }}</div>
+      <div class="answer-detail">
+        {% if a.ok %}
+          ✅ You answered: <strong style="color:var(--success)">{{ a.chosen }}</strong>
+        {% else %}
+          ❌ You answered: <strong style="color:var(--error)">{{ a.chosen }}</strong> &nbsp;|&nbsp;
+          ✅ Correct: <strong style="color:var(--success)">{{ a.correct }}</strong>
+        {% endif %}
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+</div>
+{% endblock %}

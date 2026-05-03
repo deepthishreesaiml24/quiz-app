@@ -1,0 +1,70 @@
+{% extends "base.html" %}
+{% block title %}Leaderboard — Quiz Master{% endblock %}
+{% block content %}
+<div class="page-container">
+  <div class="page-header flex-between flex-wrap gap-2">
+    <div>
+      <h1 class="page-title">🏆 Leaderboard</h1>
+      <p class="page-subtitle">Top performers across all categories</p>
+    </div>
+    <a href="{{ url_for('student_dashboard') }}" class="btn btn-secondary">← Dashboard</a>
+  </div>
+
+  <!-- Top 3 Podium -->
+  {% if overall|length >= 3 %}
+  <div style="display:flex;align-items:flex-end;justify-content:center;gap:1rem;margin-bottom:2.5rem;flex-wrap:wrap;">
+    <!-- 2nd -->
+    <div style="text-align:center;width:160px;">
+      <div style="font-size:2.5rem;">{{ overall[1].avatar if overall[1].avatar else '🎓' }}</div>
+      <div style="font-weight:800;">{{ overall[1].username }}</div>
+      <div style="font-size:0.8rem;color:var(--text-muted)">{{ overall[1].total_score }} pts</div>
+      <div style="background:linear-gradient(135deg,#9e9e9e,#616161);border-radius:var(--radius) var(--radius) 0 0;height:80px;display:flex;align-items:center;justify-content:center;margin-top:0.5rem;font-size:2rem;">🥈</div>
+    </div>
+    <!-- 1st -->
+    <div style="text-align:center;width:180px;">
+      <div style="font-size:3rem;">{{ overall[0].avatar if overall[0].avatar else '🎓' }}</div>
+      <div style="font-weight:900;font-size:1.1rem;color:var(--gold)">{{ overall[0].username }}</div>
+      <div style="font-size:0.85rem;color:var(--gold)">{{ overall[0].total_score }} pts</div>
+      <div style="background:linear-gradient(135deg,#ffd700,#ff9800);border-radius:var(--radius) var(--radius) 0 0;height:110px;display:flex;align-items:center;justify-content:center;margin-top:0.5rem;font-size:2.5rem;">🥇</div>
+    </div>
+    <!-- 3rd -->
+    <div style="text-align:center;width:160px;">
+      <div style="font-size:2.5rem;">{{ overall[2].avatar if overall[2].avatar else '🎓' }}</div>
+      <div style="font-weight:800;">{{ overall[2].username }}</div>
+      <div style="font-size:0.8rem;color:var(--text-muted)">{{ overall[2].total_score }} pts</div>
+      <div style="background:linear-gradient(135deg,#cd7f32,#8d4d1c);border-radius:var(--radius) var(--radius) 0 0;height:60px;display:flex;align-items:center;justify-content:center;margin-top:0.5rem;font-size:2rem;">🥉</div>
+    </div>
+  </div>
+  {% endif %}
+
+  <!-- Full Leaderboard -->
+  <div class="card">
+    <div class="section-title">📊 Overall Rankings</div>
+    {% for row in overall %}
+    <div class="lb-row" style="{% if loop.index <= 3 %}background:rgba(255,215,0,{{ 0.04 * (4-loop.index) }}){% endif %}">
+      <div class="lb-rank {% if loop.index==1 %}rank-1{% elif loop.index==2 %}rank-2{% elif loop.index==3 %}rank-3{% else %}rank-other{% endif %}">
+        {% if loop.index <= 3 %}
+          {{ ["🥇","🥈","🥉"][loop.index-1] }}
+        {% else %}{{ loop.index }}{% endif %}
+      </div>
+      <div class="lb-user">
+        <div class="lb-username" style="font-size:1rem;">
+          {{ row.avatar if row.avatar else '🎓' }} {{ row.username }}
+        </div>
+        <div class="lb-info">
+          Level {{ row.level }} &nbsp;•&nbsp; {{ row.quizzes }} quizzes &nbsp;•&nbsp;
+          Avg: {{ "%.1f"|format(row.avg_pct if row.avg_pct else 0) }}%
+        </div>
+      </div>
+      <div style="text-align:right;">
+        <div class="lb-score">{{ row.total_score }}</div>
+        <div style="font-size:0.75rem;color:var(--text-muted);">points</div>
+      </div>
+    </div>
+    <div class="divider" style="margin:0.3rem 0;"></div>
+    {% else %}
+    <p style="color:var(--text-muted);text-align:center;padding:2rem;">No scores yet. Be the first! 🚀</p>
+    {% endfor %}
+  </div>
+</div>
+{% endblock %}

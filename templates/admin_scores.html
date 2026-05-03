@@ -1,0 +1,57 @@
+{% extends "base.html" %}
+{% block title %}All Scores — Admin{% endblock %}
+{% block content %}
+<div class="page-container">
+  <div class="page-header flex-between flex-wrap gap-2">
+    <div>
+      <h1 class="page-title">📊 All Quiz Scores</h1>
+      <p class="page-subtitle">{{ sessions|length }} total quiz sessions recorded</p>
+    </div>
+    <a href="{{ url_for('admin_dashboard') }}" class="btn btn-secondary">← Back</a>
+  </div>
+
+  <div class="card">
+    <div style="overflow-x:auto;">
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th>#</th>
+            <th>Student</th>
+            <th>Category</th>
+            <th>Score</th>
+            <th>Correct</th>
+            <th>Wrong</th>
+            <th>%</th>
+            <th>Time</th>
+            <th>Date</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for s in sessions %}
+          <tr>
+            <td style="color:var(--text-muted);font-size:0.8rem;">{{ loop.index }}</td>
+            <td><strong>{{ s.username }}</strong></td>
+            <td>
+              <span style="color:{{ s.color }}">{{ s.icon }}</span>
+              {{ s.cat_name }}
+            </td>
+            <td><strong style="color:var(--gold)">{{ s.score }}</strong></td>
+            <td style="color:var(--success);font-weight:600;">{{ s.correct }}</td>
+            <td style="color:var(--error);font-weight:600;">{{ s.wrong }}</td>
+            <td>
+              <span class="score-badge {% if s.percentage >= 80 %}score-high{% elif s.percentage >= 50 %}score-medium{% else %}score-low{% endif %}">
+                {{ s.percentage }}%
+              </span>
+            </td>
+            <td style="color:var(--text-muted);font-size:0.85rem;">{{ s.time_taken }}s</td>
+            <td style="color:var(--text-muted);font-size:0.8rem;">{{ s.completed_at[:16] }}</td>
+          </tr>
+          {% else %}
+          <tr><td colspan="9" style="text-align:center;padding:2rem;color:var(--text-muted);">No quiz sessions yet.</td></tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+{% endblock %}

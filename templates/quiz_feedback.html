@@ -1,0 +1,34 @@
+{% extends "base.html" %}
+{% block title %}Answer — Quiz Master{% endblock %}
+{% block extra_css %}
+<meta http-equiv="refresh" content="2;url={{ url_for('quiz_question') }}">
+{% endblock %}
+{% block content %}
+<div class="feedback-card" style="{% if is_correct %}border:2px solid var(--success){% else %}border:2px solid var(--error){% endif %}">
+  {% if is_correct %}
+    <span class="feedback-icon">✅</span>
+    <h2 class="feedback-title feedback-correct">Correct! 🎉</h2>
+    <p style="color:var(--text-secondary);">+10 points added to your score!</p>
+  {% else %}
+    <span class="feedback-icon">❌</span>
+    <h2 class="feedback-title feedback-wrong">Wrong Answer</h2>
+    <div style="margin:1rem auto;max-width:400px;padding:1rem;background:rgba(0,230,118,0.07);border:1px solid rgba(0,230,118,0.2);border-radius:var(--radius);">
+      <div style="font-size:0.8rem;color:var(--text-muted);margin-bottom:0.3rem;">✅ Correct answer was:</div>
+      <div style="font-weight:700;color:var(--success);font-size:1.1rem;">
+        {{ correct_answer }}
+        {% if correct_answer == 'A' %}— {{ q.option_a }}
+        {% elif correct_answer == 'B' %}— {{ q.option_b }}
+        {% elif correct_answer == 'C' %}— {{ q.option_c }}
+        {% elif correct_answer == 'D' %}— {{ q.option_d }}
+        {% endif %}
+      </div>
+    </div>
+  {% endif %}
+  <p style="color:var(--text-muted);font-size:0.85rem;margin-top:1rem;">
+    ⏳ Auto-advancing in 2 seconds... ({{ num }}/{{ total }})
+  </p>
+  <a href="{{ url_for('quiz_question') }}" class="btn btn-primary" style="margin-top:1rem;">
+    Next Question →
+  </a>
+</div>
+{% endblock %}
